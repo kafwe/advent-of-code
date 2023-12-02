@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-type cubes struct {
+type gameSet struct {
 	red   int
 	green int
 	blue  int
@@ -25,8 +25,8 @@ func main() {
 	fmt.Println("Part 2:", part2(&games))
 }
 
-func part1(games *map[int]cubes) int {
-	bag := cubes{red: 12, green: 13, blue: 14}
+func part1(games *map[int]gameSet) int {
+	bag := gameSet{red: 12, green: 13, blue: 14}
 	sum := 0
 	for id, cubes := range *games {
 		if cubes.red <= bag.red && cubes.green <= bag.green && cubes.blue <= bag.blue {
@@ -36,7 +36,7 @@ func part1(games *map[int]cubes) int {
 	return sum
 }
 
-func part2(games *map[int]cubes) int {
+func part2(games *map[int]gameSet) int {
 	sum := 0
 	for _, cubes := range *games {
 		sum += cubes.red * cubes.green * cubes.blue
@@ -44,7 +44,7 @@ func part2(games *map[int]cubes) int {
 	return sum
 }
 
-func readGames(filePath string) map[int]cubes {
+func readGames(filePath string) map[int]gameSet {
 	file, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -52,7 +52,7 @@ func readGames(filePath string) map[int]cubes {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-	games := make(map[int]cubes)
+	games := make(map[int]gameSet)
 	for scanner.Scan() {
 		id, cubes := parseLine(scanner.Text())
 		games[id] = cubes
@@ -65,7 +65,7 @@ func readGames(filePath string) map[int]cubes {
 	return games
 }
 
-func parseLine(line string) (int, cubes) {
+func parseLine(line string) (int, gameSet) {
 	var id int
 	parts := strings.Split(line, ": ")
 
@@ -74,7 +74,7 @@ func parseLine(line string) (int, cubes) {
 		log.Fatal(err)
 	}
 
-	cubes := cubes{}
+	cubes := gameSet{}
 	var color string
 	var num int
 
