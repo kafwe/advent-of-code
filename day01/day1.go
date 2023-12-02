@@ -57,8 +57,8 @@ func part2() int {
 	scanner := bufio.NewScanner(file)
 	total := 0
 	for scanner.Scan() {
-		processedLine := processSpelledNumbers(scanner.Text())
-		total += getNumber(processedLine)
+		line := processSpelledNumbers(scanner.Text())
+		total += getNumber(line)
 	}
 
 	if err := scanner.Err(); err != nil {
