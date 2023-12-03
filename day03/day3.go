@@ -128,7 +128,7 @@ func findGearRatio(schematic []string, row, col int) int {
 		endCol = len(schematic[row]) - 1
 	}
 
-	partNums := []int{}
+	var partNums []int
 	// Iterate over the surrounding square
 	for r := startRow; r <= endRow; r++ {
 		var num string
@@ -141,7 +141,7 @@ func findGearRatio(schematic []string, row, col int) int {
 				num += string(schematic[r][c])
 			}
 
-			if !unicode.IsDigit(rune(schematic[r][c])) || r == len(schematic[c])-1 {
+			if !unicode.IsDigit(rune(schematic[r][c])) || c == len(schematic[c])-1 {
 				touchesEnd := math.Abs(float64(c-1-col)) <= 1 && math.Abs(float64(r-row)) <= 1
 				touchesStart := math.Abs(float64(start-col)) <= 1 && math.Abs(float64(r-row)) <= 1
 				if (touchesStart || touchesEnd) && len(num) > 0 {
@@ -176,7 +176,7 @@ func readSchematic(filePath string) []string {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-	schematic := []string{}
+	var schematic []string
 	for scanner.Scan() {
 		schematic = append(schematic, scanner.Text())
 	}
