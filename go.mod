@@ -1,3 +1,3 @@
-module adventOfCode2023
+module github.com/kafwe/advent-of-code
 
 go 1.20
