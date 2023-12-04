@@ -12,51 +12,57 @@ import (
 type card struct {
 	winningNumbers []string
 	userNumbers    []string
+	quantity       int
+	numMatches     int
 }
 
 func main() {
-	/*
-		if len(os.Args) < 2 {
-			log.Fatal("Missing input file argument")
-		}
-		file := os.Args[1]
-
-	*/
-	cards := readCards("./day04/input.txt")
-
-	fmt.Println("Part 1:", part1(cards))
-}
-
-func part1(cards []card) int {
-	points := 0
-	for _, card := range cards {
-		fmt.Println(card)
-		numMatches := countMatches(card.winningNumbers, card.userNumbers)
-		points += calculatePoints(numMatches)
-		fmt.Println("Points:", points, "Matches:", numMatches)
+	if len(os.Args) < 2 {
+		log.Fatal("Missing input file argument")
 	}
-	return points
+	file := os.Args[1]
+	cards := readCards(file)
+
+	points := 0
+	for i := range cards {
+		card := &cards[i]
+		countMatches(card)
+		for j := 0; j < card.quantity; j++ {
+			for k := 1; k <= card.numMatches; k++ {
+				cards[k+i].quantity++
+			}
+		}
+		points += calcPoints(card.numMatches)
+	}
+
+	total := 0
+	for _, c := range cards {
+		total += c.quantity
+	}
+
+	fmt.Println("Total points:", points)
+	fmt.Println("Total instances:", total)
 }
 
-func countMatches(winningNumbers, userNumbers []string) int {
+func countMatches(card *card) int {
 	matches := 0
 	seen := make(map[string]bool)
 
-	for _, num := range winningNumbers {
+	for _, num := range card.winningNumbers {
 		seen[num] = true
 	}
 
-	for _, num := range userNumbers {
-		if seen[num] && num != "" {
-			seen[num] = false
-			matches++
+	for _, num := range card.userNumbers {
+		if seen[num] {
+			seen[num] = false // avoid duplicates
+			card.numMatches++
 		}
 	}
 
 	return matches
 }
 
-func calculatePoints(numMatches int) int {
+func calcPoints(numMatches int) int {
 	if numMatches == 0 {
 		return 0
 	}
@@ -75,9 +81,7 @@ func readCards(filePath string) []card {
 	for scanner.Scan() {
 		_, parts, _ := strings.Cut(scanner.Text(), ": ")
 		nums := strings.Split(parts, "|")
-		winNums := strings.Split(strings.TrimSpace(nums[0]), " ")
-		userNums := strings.Split(strings.TrimSpace(nums[1]), " ")
-		cards = append(cards, card{winNums, userNums})
+		cards = append(cards, card{strings.Fields(nums[0]), strings.Fields(nums[1]), 1, 0})
 	}
 
 	if err := scanner.Err(); err != nil {
