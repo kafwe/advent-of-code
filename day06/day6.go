@@ -43,7 +43,8 @@ func calcNumWays(time, dist int) int {
 	numWays := 0
 	for i := 0; i < time; i++ {
 		speed := i
-		calcDist := speed * (time - i)
+		remainingTime := time - i
+		calcDist := speed * remainingTime
 		if calcDist > dist {
 			numWays++
 		}
