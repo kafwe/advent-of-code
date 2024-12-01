@@ -38,7 +38,6 @@ func main() {
 
 	fmt.Println("Part 1:", part1(l, r))
 	fmt.Println("Part 2:", part2(l, r))
-
 }
 
 func part1(l []int, r []int) int {
@@ -53,32 +52,16 @@ func part1(l []int, r []int) int {
 }
 
 func part2(l []int, r []int) int {
-	left := make(map[int]int)
-	right := make(map[int]int)
-
+	counts := make(map[int]int)
 	for _, num := range l {
-		_, checked := left[num]
-		left[num]++
-		// already counted num occurences in right list
-		if checked {
-			continue
-		}
-
-		for _, val := range r {
-			if val == num {
-				right[num]++
-			}
-		}
-
+		counts[num]++
 	}
 
 	score := 0
-	for k, v := range left {
-		for i := 0; i < v; i++ {
-			score += right[k] * k
+	for _, num := range r {
+		if _, ok := counts[num]; ok {
+			score += num * counts[num]
 		}
 	}
-
 	return score
-
 }
