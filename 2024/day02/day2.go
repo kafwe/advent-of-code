@@ -38,17 +38,6 @@ func main() {
 	fmt.Println("Part 2:", countSafeReports(reports, true))
 }
 
-func part1(reports [][]int) int {
-	count := 0
-	for _, report := range reports {
-		safe := isSafe(report)
-		if safe {
-			count++
-		}
-	}
-	return count
-}
-
 func countSafeReports(reports [][]int, dampen bool) int {
 	count := 0
 	for _, report := range reports {
@@ -74,25 +63,16 @@ func countSafeReports(reports [][]int, dampen bool) int {
 
 func isSafe(report []int) bool {
 	diff := report[1] - report[0]
-	increasing := isIncreasing(diff)
+	increasing := diff < 0
 
 	for i := 1; i < len(report); i++ {
-		currentDifference := report[i] - report[i-1]
-		if math.Abs(float64(currentDifference)) < 1 || math.Abs(float64(currentDifference)) > 3 {
+		diff = report[i] - report[i-1]
+		if math.Abs(float64(diff)) < 1 || math.Abs(float64(diff)) > 3 {
 			return false
 		}
-		if isIncreasing(currentDifference) != increasing {
+		if diff < 0 != increasing {
 			return false
 		}
 	}
 	return true
-}
-
-func isIncreasing(n int) bool {
-	if n >= 1 {
-		return false
-	} else if n < 0 {
-		return true
-	}
-	return false
 }
