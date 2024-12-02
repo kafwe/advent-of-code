@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -33,40 +34,58 @@ func main() {
 		reports[i] = levels
 	}
 
-	fmt.Println(reports)
-	fmt.Println("Part 1:", part1(reports))
+	fmt.Println("Part 1:", countSafeReports(reports, false))
+	fmt.Println("Part 2:", countSafeReports(reports, true))
 }
 
 func part1(reports [][]int) int {
 	count := 0
 	for _, report := range reports {
-		var increasing bool
-		safe := true
-		for l, _ := range report {
-			if l == len(report)-1 {
-				continue
-			}
-
-			r := l + 1
-			diff := report[l] - report[r]
-			if l == 0 {
-				increasing = isIncreasing(diff)
-			}
-
-			if math.Abs(float64(diff)) < 1 || math.Abs(float64(diff)) > 3 {
-				safe = false
-			}
-
-			if increasing != isIncreasing(diff) {
-				safe = false
-			}
-		}
-
+		safe := isSafe(report)
 		if safe {
 			count++
 		}
 	}
 	return count
+}
+
+func countSafeReports(reports [][]int, dampen bool) int {
+	count := 0
+	for _, report := range reports {
+		for i, _ := range report {
+			safe := isSafe(report)
+			if safe {
+				count++
+				break
+			}
+
+			if dampen {
+				dampened := slices.Delete(slices.Clone(report), i, i+1)
+				safe = isSafe(dampened)
+				if safe {
+					count++
+					break
+				}
+			}
+		}
+	}
+	return count
+}
+
+func isSafe(report []int) bool {
+	diff := report[1] - report[0]
+	increasing := isIncreasing(diff)
+
+	for i := 1; i < len(report); i++ {
+		currentDifference := report[i] - report[i-1]
+		if math.Abs(float64(currentDifference)) < 1 || math.Abs(float64(currentDifference)) > 3 {
+			return false
+		}
+		if isIncreasing(currentDifference) != increasing {
+			return false
+		}
+	}
+	return true
 }
 
 func isIncreasing(n int) bool {
